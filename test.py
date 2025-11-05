@@ -1,10 +1,9 @@
 import serial
 import time
 
-PORT = "/dev/serial0"   # of "/dev/ttyAMA0"
-BAUDRATE = 115200       # pas aan indien nodig
+PORT = "/dev/serial0"
+BAUDRATE = 115200
 
-# Open seriële poort
 ser = serial.Serial(PORT, BAUDRATE, timeout=2)
 print(f"Poort {PORT} geopend op {BAUDRATE} baud.")
 
@@ -12,15 +11,19 @@ try:
     while True:
         cmd = input("Voer een commando in (bijv. AT): ")
         if cmd.lower() == "exit":
-            print("Script afgesloten.")
             break
 
-        # Verstuur commando met CRLF
         ser.write((cmd + "\r\n").encode('utf-8'))
-        time.sleep(0.5)
+        ser.flush()
 
-        # Lees antwoord
-        response = ser.read(ser.in_waiting or 64)
+        # Wacht tot antwoord binnenkomt
+        response = b""
+        start = time.time()
+        while time.time() - start < 3:  # max 3 sec
+            if ser.in_waiting:
+                response += ser.read(ser.in_waiting)
+            time.sleep(0.1)
+
         if response:
             print(f"Antwoord: {response.decode('utf-8', errors='ignore')}")
         else:

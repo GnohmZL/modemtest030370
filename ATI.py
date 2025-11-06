@@ -2,24 +2,23 @@ import serial
 import time
 
 PORT = "/dev/serial0"
-BAUDRATE = 38400  # aanbevolen baudrate
-TIMEOUT = 3       # iets langer wachten
+BAUDRATE = 38400
 
-# Open seriële poort
+# Open seriële poort met vaste configuratie
 ser = serial.Serial(
     PORT,
     baudrate=BAUDRATE,
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,
     bytesize=serial.EIGHTBITS,
-    timeout=TIMEOUT
+    timeout=3
 )
 
 print(f"Poort {PORT} geopend op {BAUDRATE} baud.")
 
 try:
     while True:
-        cmd = input("Voer een commando in (bijv. ATI): ")
+        cmd = input("Voer een AT-commando in (bijv. ATI): ")
         if cmd.lower() == "exit":
             print("Script afgesloten.")
             break
@@ -28,10 +27,10 @@ try:
         ser.write((cmd + "\r\n").encode('utf-8'))
         ser.flush()
 
-        # Lees antwoord (tot timeout)
+        # Lees antwoord
         response = b""
         start = time.time()
-        while time.time() - start < TIMEOUT:
+        while time.time() - start < 3:
             if ser.in_waiting:
                 response += ser.read(ser.in_waiting)
             time.sleep(0.1)

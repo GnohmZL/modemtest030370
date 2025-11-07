@@ -6,7 +6,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # UART configuratie
-uart = serial.Serial("/dev/serial0", baudrate=115200, timeout=2)
+uart = serial.Serial("/dev/serial0", baudrate=38400, timeout=2)
 
 APN = "internet"  # Vul hier je APN in
 

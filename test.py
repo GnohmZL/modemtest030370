@@ -2,7 +2,7 @@ import serial
 import time
 
 PORT = "/dev/serial0"
-BAUDRATE = 115200
+BAUDRATE = 38400
 
 ser = serial.Serial(PORT, BAUDRATE, timeout=2)
 print(f"Poort {PORT} geopend op {BAUDRATE} baud.")

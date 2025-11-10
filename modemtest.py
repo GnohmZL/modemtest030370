@@ -13,7 +13,7 @@ SERIAL_PORT = "/dev/serial0"  # Pas aan indien nodig
 BAUDRATE = 38400
 TIMEOUT = 2
 
-# Uitgebreide lijst van AT-commando's
+# AT-commando's
 at_commands = {
     "Modem communicatie test": "AT",
     "SIM status": "AT+CPIN?",
@@ -44,11 +44,11 @@ results = {}
 
 # Functie om AT-commando te sturen en antwoord te verwerken
 def send_at_command(ser, command):
-    print(f"{CYAN}Verstuur commando: {command}{RESET}")
+    print(f"{CYAN}Commando: {command}{RESET}")
     ser.write((command + "\r").encode())
     time.sleep(0.7)
     response = ser.read_all().decode(errors='ignore').strip()
-    print(f"{YELLOW}Response:\n{response}{RESET}\n")
+    print(f"{YELLOW}Antwoord:\n{response}{RESET}\n")
     return response
 
 # Seriële communicatie starten
@@ -56,29 +56,29 @@ try:
     with serial.Serial(SERIAL_PORT, BAUDRATE, timeout=TIMEOUT) as ser:
         print(f"{GREEN}Verbonden met {SERIAL_PORT} op {BAUDRATE} bps{RESET}\n")
         for description, command in at_commands.items():
-            print(f"{CYAN}--- {description} ---{RESET}")
+            print(f"{CYAN}{description}{RESET}")
             response = send_at_command(ser, command)
             success = "OK" in response and "ERROR" not in response
             results[description] = {
                 "Commando": command,
                 "Resultaat": response,
-                "Status": f"{GREEN}Succes{RESET}" if success else f"{RED}❌ Fout{RESET}"
+                "Status": f"{GREEN}Geslaagd{RESET}" if success else f"{RED}Mislukt{RESET}"
             }
 
     # Eindrapport
-    print(f"\n{CYAN}================== SAMENVATTING =================={RESET}")
+    print(f"\n{CYAN}Samenvatting van de testresultaten:{RESET}")
     all_success = True
     for desc, info in results.items():
         print(f"{desc}: {info['Status']}")
         print(f"  {CYAN}Commando:{RESET} {info['Commando']}")
         print(f"  {YELLOW}Resultaat:{RESET} {info['Resultaat']}\n")
-        if "❌" in info["Status"]:
+        if "Mislukt" in info["Status"]:
             all_success = False
 
     if all_success:
         print(f"{GREEN}Alle tests zijn succesvol uitgevoerd.{RESET}")
     else:
-        print(f"{RED}Eén of meerdere tests zijn mislukt. Zie details hierboven.{RESET}")
+        print(f"{RED}Een of meerdere tests zijn mislukt. Zie details hierboven.{RESET}")
 
 except serial.SerialException as e:
     print(f"{RED}Fout bij openen van seriële poort: {e}{RESET}")

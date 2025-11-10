@@ -9,7 +9,7 @@ YELLOW = "\033[93m"
 RESET = "\033[0m"
 
 # Seriële poortinstellingen
-SERIAL_PORT = "/dev/ttyUSB0"  # Pas aan indien nodig
+SERIAL_PORT = "/dev/serial0"  # Pas aan indien nodig
 BAUDRATE = 38400
 TIMEOUT = 2
 
@@ -44,11 +44,11 @@ results = {}
 
 # Functie om AT-commando te sturen en antwoord te verwerken
 def send_at_command(ser, command):
-    print(f"{CYAN}>>> Verstuur commando: {command}{RESET}")
+    print(f"{CYAN}Verstuur commando: {command}{RESET}")
     ser.write((command + "\r").encode())
     time.sleep(0.7)
     response = ser.read_all().decode(errors='ignore').strip()
-    print(f"{YELLOW}<<< Response:\n{response}{RESET}\n")
+    print(f"{YELLOW}Response:\n{response}{RESET}\n")
     return response
 
 # Seriële communicatie starten
